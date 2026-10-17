@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>URAH_MapKit</AssemblyName>
+    <RootNamespace>URAH_MapKit</RootNamespace>
+    <URAHModLink>true</URAHModLink>
+    <!-- shared/ of the workspace (koh2-knowledge) when there, else the submodule -->
+    <URAHShared Condition="'$(URAHShared)' == '' and Exists('$(MSBuildProjectDirectory)/../../../shared/URAH.Plugin.props')">$(MSBuildProjectDirectory)/../../../shared</URAHShared>
+    <URAHShared Condition="'$(URAHShared)' == ''">$(MSBuildProjectDirectory)/../external/URAH_shared</URAHShared>
+  </PropertyGroup>
+
+  <Import Project="$(URAHShared)/URAH.Plugin.props" />
+
+  <ItemGroup>
+    <Reference Include="UnityEngine.TerrainModule" HintPath="$(ManagedDir)/UnityEngine.TerrainModule.dll" Private="false" />
+    <Reference Include="UnityEngine.UI" HintPath="$(ManagedDir)/UnityEngine.UI.dll" Private="false" />
+    <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(ManagedDir)/UnityEngine.ImageConversionModule.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="Deploy" AfterTargets="Build" Condition="'$(Deploy)' == 'true'">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BepInExPlugins)/URAH_MapKit" />
+  </Target>
+
+</Project>
