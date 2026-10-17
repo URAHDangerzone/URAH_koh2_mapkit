@@ -20,7 +20,7 @@ namespace URAH_MapKit
     {
         public const string Guid = "urah.koh2.mapkit";
         public const string Name = "URAH_MapKit";
-        public const string Version = "0.1.0";
+        public const string Version = URAH.BuildVersion.Value; // plugin/version.txt
 
         internal static ManualLogSource Log;
 
