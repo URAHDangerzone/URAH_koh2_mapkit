@@ -120,36 +120,27 @@ namespace URAH_MapKit
 
             /// <summary>
             /// Cost of the step prev -> node in direction dir (12: river jump), -1 where Open refuses it. No
-            /// cheap water entry: an edge is priced for an army that stays on land.
+            /// cheap water entry: an edge is priced for an army that stays on land. Rules: water costs the
+            /// base weight, times the water entry factor when coming from land, and so does land reached
+            /// from water; land of weight 0 is only entered from other weight 0 land, at 10; a river jump
+            /// costs 5 river avoidance; diagonals (dir 0, 2, 5, 7) cost 7/5 of a straight step.
             /// </summary>
             public int Step(in PathData.Node prev, in PathData.Node node, int dir)
             {
-                int num;
-                if (node.ocean)
-                {
-                    num = prev.ocean ? BaseWeight : BaseWeight * EnterWater;
-                }
-                else
-                {
-                    num = node.weight;
-                    if (num == 0)
-                    {
-                        if (prev.ocean || prev.weight > 0)
-                        {
-                            return -1;
-                        }
-                        num = 10;
-                    }
-                    else if (prev.ocean)
-                    {
-                        num = BaseWeight * EnterWater;
-                    }
-                }
+                bool zeroLand = !node.ocean && node.weight == 0;
+                if (zeroLand && (prev.ocean || prev.weight > 0))
+                    return -1;
                 if (dir == 12)
-                {
                     return 5 * River;
-                }
-                return (dir == 0 || dir == 2 || dir == 5 || dir == 7 ? 7 : 5) * num;
+                int terrain;
+                if (node.ocean != prev.ocean)
+                    terrain = BaseWeight * EnterWater;
+                else if (node.ocean)
+                    terrain = BaseWeight;
+                else
+                    terrain = zeroLand ? 10 : node.weight;
+                bool diagonal = dir == 0 || dir == 2 || dir == 5 || dir == 7;
+                return (diagonal ? 7 : 5) * terrain;
             }
         }
 
