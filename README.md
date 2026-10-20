@@ -32,7 +32,7 @@ without copying it.
 ## Releases
 
 MapKit has no release of its own: it ships signed inside the map mods that use it, for example in
-`URAH_HRE-plugins.zip` of [`URAH_HRE-v<version>`](https://github.com/URAHDangerzone/URAH_koh2_releases/releases?q=URAH_HRE&expanded=true) in [URAH_koh2_releases](https://github.com/URAHDangerzone/URAH_koh2_releases/releases).
+`URAH_HRE-plugins.zip` of [`URAH_HRE-v<version>`](https://github.com/URAHDangerzone/URAH_koh2_releases/releases?q=URAH_HRE&expanded=true) in [URAH_koh2_releases](https://github.com/URAHDangerzone/URAH_koh2_releases/releases?q=URAH_HRE&expanded=true).
 Every release is signed with the URAH release key; [URAH_koh2_releases](https://github.com/URAHDangerzone/URAH_koh2_releases) explains how to check it.
 
 ## Building
