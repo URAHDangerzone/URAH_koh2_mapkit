@@ -52,7 +52,7 @@ namespace URAH_MapKit
             }
 
             // edges: open sea keeps vanilla's weights, every other edge weighs what the low level search pays
-            // between the two waypoints, the scale of vanilla's baked grid (docs/hre/PATHFINDING_PLAN.md, F1)
+            // between the two waypoints, the scale of vanilla's baked grid
             var cost = new EdgeCost(pf);
             int updated = 0, blocked = 0;
             object counts = new object();
