@@ -81,7 +81,12 @@ namespace URAH_MapKit
                             }
                             continue; // otherwise untouched open sea keeps its baked weight
                         }
-                        uint c = search.Run((int)a.x, (int)a.y, (int)b.x, (int)b.y);
+                        // a waypoint on weight 0 land (a tile without passable land, CellOffset) is never
+                        // reached: Open leaves weight 0 land but does not enter it, and the search runs a -> b
+                        // only, so from that side it would price the edge as if it could be walked both ways
+                        uint c = ZeroLand(data, a) || ZeroLand(data, b)
+                            ? uint.MaxValue
+                            : search.Run((int)a.x, (int)a.y, (int)b.x, (int)b.y);
                         ushort weight = c < ushort.MaxValue ? (ushort)c : ushort.MaxValue;
                         if (weight == ushort.MaxValue)
                         {
@@ -413,6 +418,13 @@ namespace URAH_MapKit
         /// or water, else the passable land node of the tile farthest from any obstacle, the nearest to
         /// the center on ties. Keeps the waypoint off banks, cliffs and narrow spots.
         /// </summary>
+        /// <summary>Land of weight 0 under p, as EdgeCost.Step sees it.</summary>
+        private static bool ZeroLand(PathData data, Point p)
+        {
+            PathData.Node n = data.nodes[(int)p.y * data.width + (int)p.x];
+            return !n.ocean && n.weight == 0;
+        }
+
         private static byte CellOffset(PathData data, ushort[] clearance, int gx, int gy, int tile)
         {
             const byte center = 0x88;
