@@ -425,9 +425,39 @@ namespace URAH_MapKit
             return !n.ocean && n.weight == 0;
         }
 
+        /// <summary>A road node at most this far from the tile center becomes the waypoint.</summary>
+        private const int RoadSnap = 6;
+
         private static byte CellOffset(PathData data, ushort[] clearance, int gx, int gy, int tile)
         {
             const byte center = 0x88;
+            // a road near the center takes the waypoint (the road node nearest the center): edges priced
+            // between waypoints off the road missed the roads, so the high level path left them for
+            // open land beside them (Dortmund - Roermond along the Rhine instead of the road south west)
+            int roadBest = RoadSnap * RoadSnap + 1;
+            byte roadResult = center;
+            for (int oy = 0; oy < tile; oy++)
+            {
+                for (int ox = 0; ox < tile; ox++)
+                {
+                    int x = gx * tile + ox, y = gy * tile + oy;
+                    if (x >= data.width || y >= data.height)
+                    {
+                        continue;
+                    }
+                    PathData.Node n = data.nodes[y * data.width + x];
+                    int dist = (ox - 8) * (ox - 8) + (oy - 8) * (oy - 8);
+                    if ((n.bits & PathData.Node.ROAD_MASK) != 0 && n.weight > 0 && !n.water && dist < roadBest)
+                    {
+                        roadBest = dist;
+                        roadResult = (byte)((ox << 4) | oy);
+                    }
+                }
+            }
+            if (roadBest <= RoadSnap * RoadSnap)
+            {
+                return roadResult;
+            }
             int cx = Math.Min(gx * tile + 8, data.width - 1), cy = Math.Min(gy * tile + 8, data.height - 1);
             int ci = cy * data.width + cx;
             if (data.nodes[ci].water || clearance[ci] >= 7 * 3)
